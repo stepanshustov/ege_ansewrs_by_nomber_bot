@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-# get token from .env file
+# Получаем токен из файла .env
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 
-# function to start bot
+# Создаем бота
 async def start_bot():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher(bot=bot)
@@ -19,6 +19,7 @@ async def start_bot():
     await dp.start_polling()
 
 
+# Вечный цикл жизни бота, для выхода нажать Ctrl+C
 if __name__ == "__main__":
     while True:
         try:
