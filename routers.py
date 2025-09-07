@@ -7,7 +7,7 @@ from aiogram import Router, F, BaseMiddleware
 from aiogram.types import *
 
 from my_requests import get_answer_by_kompege
-
+from config import *
 
 # защита от спама
 class ThrottlingMiddleware(BaseMiddleware):
@@ -34,7 +34,6 @@ class ThrottlingMiddleware(BaseMiddleware):
             if elapsed < self.rate_limit:
                 # Если сообщение пришло слишком рано - блокируем
                 await event.answer("⏳ Слишком часто! Подождите немного...")
-                return
 
         # Обновляем время последнего сообщения
         self.last_processed[user_id] = current_time
@@ -52,7 +51,7 @@ app.message.middleware(ThrottlingMiddleware(5))  # запрос раз в 5 се
 @app.message(CommandStart())
 async def start(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer("", parse_mode="html", )
+    await message.answer(START_MESSAGE, parse_mode="html", )
 
 
 @app.message(Command("help"))
@@ -63,27 +62,8 @@ async def help_(message: Message):
 @app.message()
 async def users_request(message: Message, state: FSMContext):
     t = message.text.strip()
-    resp = await make_to_do_list(t)  # (bool, str)
-    if not resp[0]:
-        await message.answer(resp[1])  # ошибка/некорректный запрос
+    if not t.strip().replace(' ', '').isalnum():
+        await message.answer("Номер должен состоять из цифр!")
         return
-
-    # получаем список дел
-    todolist = [list(map(str.strip, el.split("|"))) for el in resp[1].split("\n")]
-    # Получаем и проверяем результат
-    res = await async_generate_todo_image(todolist)
-    # print(res)
-    if not res[0]:
-        await message.answer("Произошла ошибка при генерации изображения.")
-        return
-    img_bytesio = res[1]
-
-    # Сбрасываем курсор в начало
-    img_bytesio.seek(0)
-
-    # Создаём BufferedInputFile
-    image_file = BufferedInputFile(
-        file=img_bytesio.getvalue(),
-        filename="todo_list.png"
-    )
-    await message.answer_photo(photo=image_file)
+    ans = await get_answer_by_kompege(t)
+    await message.answer(f"Ответ: <b>{ans}</b>", parse_mode="html")

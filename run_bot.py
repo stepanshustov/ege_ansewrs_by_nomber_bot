@@ -1,22 +1,16 @@
 from aiogram import Bot, Dispatcher
 from routers import app
 import asyncio
-
-from datetime import datetime
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-# Получаем токен из файла .env
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+import time
+from config import *
 
 
 # Создаем бота
 async def start_bot():
     bot = Bot(token=BOT_TOKEN)
-    dp = Dispatcher(bot=bot)
+    dp = Dispatcher()
     dp.include_router(app)
-    await dp.start_polling()
+    await dp.start_polling(bot)
 
 
 # Вечный цикл жизни бота, для выхода нажать Ctrl+C
@@ -30,3 +24,5 @@ if __name__ == "__main__":
                 exit(0)
             with open("logs.txt", "a") as f:
                 print(f"---\n{datetime.now()}\nError: {e}\n---", file=f)
+            # raise e
+        time.sleep(1)
