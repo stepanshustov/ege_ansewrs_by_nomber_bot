@@ -62,8 +62,14 @@ async def help_(message: Message):
 @app.message()
 async def users_request(message: Message, state: FSMContext):
     t = message.text.strip()
-    if not t.strip().replace(' ', '').isalnum():
+    if not t.strip().replace(' ', '').isnumeric():
         await message.answer("Номер должен состоять из цифр!")
         return
     ans = await get_answer_by_kompege(t)
+    if ans is None:
+        await message.answer(
+            "❌ Не удалось найти ответ по вашему запросу!",
+            parse_mode="html"
+        )
+        return
     await message.answer(f"Ответ: <b>{ans}</b>", parse_mode="html")

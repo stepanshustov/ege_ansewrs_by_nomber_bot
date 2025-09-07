@@ -22,7 +22,6 @@ if __name__ == "__main__":
             if e == KeyboardInterrupt:
                 print("Bot stopped")
                 exit(0)
-            with open("logs.txt", "a") as f:
-                print(f"---\n{datetime.now()}\nError: {e}\n---", file=f)
+            log_write(e)
             # raise e
         time.sleep(1)

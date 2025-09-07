@@ -11,3 +11,7 @@ START_MESSAGE = """Привет, я помогу тебе быстро узна�
 Ограничения: <b> 1 запрос в 5 секунд </b>"""
 
 HELP_MESSAGE = START_MESSAGE
+
+def log_write(message):
+    with open("logs.txt", "a") as f:
+        print(f"---\n{datetime.now()}\nError: {message}\n---", file=f)
